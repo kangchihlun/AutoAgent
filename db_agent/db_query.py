@@ -23,11 +23,17 @@ class ChinookQueryAgent:
             self.llm, 
             self.db, 
             verbose=True,
-            use_query_checker=True
+            use_query_checker=True,
+            return_direct=False  # This ensures the LLM processes the result
         )
 
     def query(self, natural_language):
-        return self.db_chain.run(natural_language)
+        # Add context to help LLM generate more natural responses
+        prompt = f"""Based on this question: {natural_language}
+        Please provide the answer in a natural, conversational way.
+        If the result involves numbers, include them in the response."""
+        
+        return self.db_chain.run(prompt)
 
 # AutoAgent 集成接口
 if __name__ == "__main__":
